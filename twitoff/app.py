@@ -41,8 +41,10 @@ def create_app():
 
     @app.route("/update")
     def update():
-        # User.query.all()
-        # for user in username_list import add_or_update_user(username)
+        # Update tweets of all users in the database
+        for user in User.query.all():
+            add_or_update_user(user.name)
+
         return render_template('base.html', title="Home", users=User.query.all())
 
     @app.route('/examples')

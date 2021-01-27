@@ -54,8 +54,8 @@ def add_or_update_user(username):
             # create an embedding for each tweet
             vectorized_tweet = vectorize_tweet(tweet.text)
             # create tweet that will be added to DB
-            db_tweet = Tweet(id=tweet.id, text=tweet.text,
-                             vect=vectorized_tweet)
+            db_tweet = (Tweet.query.get(tweet.id)) or Tweet(
+                id=tweet.id, text=tweet.text, vect=vectorized_tweet)
             # append each tweet from 'username' to  username.tweets
             db_user.tweets.append(db_tweet)
             # Add db_tweet to Tweet DB
@@ -66,6 +66,7 @@ def add_or_update_user(username):
         raise e
 
     else:
+        print("Commiting to DB...")
         # commit changes to DB
         DB.session.commit()
 
