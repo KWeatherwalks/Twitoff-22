@@ -71,9 +71,9 @@ def add_or_update_user(username):
 
 
 def insert_example_users():
-    username_list = ['KWeatherwalks', 'timnitGebru', 'DrIbram', 'StephStammel',
-                     'kareem_carr', 'MsPackyetti', 'kjhealy', 'rajiinio']
-
+    # Usernames to propagate website
+    usernames = ['KWeatherwalks', 'timnitGebru', 'DrIbram', 'StephStammel',
+                 'kareem_carr', 'MsPackyetti', 'kjhealy', 'rajiinio']
     # Create users and add to database
-    for user in username_list:
+    for user in usernames:
         add_or_update_user(user)

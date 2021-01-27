@@ -2,9 +2,10 @@
 
 from os import getenv
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 
 from .models import DB, User
+from .predict import predict_user
 from .twitter import add_or_update_user, insert_example_users
 
 
@@ -22,19 +23,48 @@ def create_app():
             'base.html', title="Home", users=User.query.all()
         )
 
-    @app.route('/goodbye')
-    def goodbye():
-        return "Goodbye, Twitoff!"
+    @app.route("/user", methods=["POST"])
+    @app.route("/user/<name>", methods=["GET"])
+    def user(name=None, message=""):
+        name = name or request.values["user_name"]
+        try:
+            if request.method == "POST":
+                add_or_update_user(name)
+                message = f"User {name} was successfully added!"
+            tweets = User.query.filter(User.name == name).one().tweets
 
-    @app.route("/update/<username>")
-    def update(username):
-        add_or_update_user(username)
+        except Exception as e:
+            message = f"Error adding {name}: {e}"
+            tweets = []
+
+        return render_template("user.html", title=name, tweets=tweets, message=message)
+
+    @app.route("/update")
+    def update():
+        # User.query.all()
+        # for user in username_list import add_or_update_user(username)
         return render_template('base.html', title="Home", users=User.query.all())
 
     @app.route('/examples')
     def examples():
         insert_example_users()
         return render_template('base.html', title="Home", users=User.query.all())
+
+    @app.route("/compare", methods=["POST"])
+    def compare():
+        user0, user1 = sorted(
+            [request.values["user1"], request.values["user2"]])
+        if user0 == user1:
+            message = "Cannot compare users to themselves"
+        else:
+            prediction = predict_user(
+                user0, user1, request.values["tweet_text"])
+            message = "{} is more likely to be said by {} than {}".format(
+                request.values["tweet_text"],
+                user1 if prediction else user0,
+                user0 if prediction else user1)
+
+        return render_template("prediction.html", title="Prediction", message=message)
 
     @app.route('/reset')
     def reset():
