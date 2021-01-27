@@ -10,6 +10,7 @@ class User(DB.Model):
     """Twitter Users corresponding to tweets"""
     id = DB.Column(DB.BigInteger, primary_key=True)  # id column
     name = DB.Column(DB.String, nullable=False)  # name column
+    newest_tweet_id = DB.Column(DB.BigInteger)  # most recent tweet
 
     def __repr__(self):
         return f"<User: {self.name}>"
@@ -17,9 +18,12 @@ class User(DB.Model):
 
 class Tweet(DB.Model):
     """Tweets corresponding to Users"""
+    # Columns in the DB
     id = DB.Column(DB.BigInteger, primary_key=True)
     # tweet text column - allows for emojis/links
     text = DB.Column(DB.Unicode(300), nullable=False)
+    # vectorized tweet
+    vect = DB.Column(DB.PickleType, nullable=False)
     # user_id column (corresponding user)
     user_id = DB.Column(DB.BigInteger, DB.ForeignKey(
         "user.id"), nullable=False)
@@ -28,16 +32,3 @@ class Tweet(DB.Model):
 
     def __repr__(self):
         return f"<Tweet: {self.text}>"
-
-
-def insert_example_users():
-    username_list = ['KWeatherwalks', 'timnitGebru', 'DrIbram', 'StephStammel',
-                     'kareem_carr', 'MsPackyetti', 'kjhealy', 'rajiinio']
-
-    # Create users and add to database
-    for i, user in enumerate(username_list):
-        DB.session.add(
-            User(id=i+1, name=user)
-        )
-    # Commit changes
-    DB.session.commit()
