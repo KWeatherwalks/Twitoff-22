@@ -14,10 +14,9 @@ scikit-learn = "*"
 gunicorn = "*"
 psycopg2-binary = "*"
 cython = "*"
-pip = ">=19.3"
 
 [dev-packages]
 autopep8 = "*"
 
 [requires]
-python_version = "3.9"
+python_version = "3.8"
