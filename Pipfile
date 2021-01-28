@@ -14,7 +14,6 @@ scikit-learn = "*"
 gunicorn = "*"
 psycopg2-binary = "*"
 cython = "*"
-pip >= 19.3
 
 [dev-packages]
 autopep8 = "*"
